@@ -3,42 +3,13 @@ import org.w3c.dom.css.RGBColor;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.TimerTask;
 
 public class PaintGraph extends JPanel {
 
     private int scale, nx, paddingY, paddingX, lengthY, lengthX, center, biasForSecondSystem;
     private ArrayList<Point> polygonPoints;
-    private float halfOfX, halfOfY, stepX, yg, xk;
-    private boolean drawGrid;
-    int red, green, blue;
-
-    public boolean isSpin() {
-        return spin;
-    }
-
-    public void setSpin(boolean spin) {
-        this.spin = spin;
-    }
-
-    private boolean spin;
-
-    public boolean isDrawSteps() {
-        return drawSteps;
-    }
-
-    public void setDrawSteps(boolean drawSteps) {
-        this.drawSteps = drawSteps;
-    }
-
-    public boolean isDrawSystem() {
-        return drawSystem;
-    }
-
-    public void setDrawSystem(boolean drawSystem) {
-        this.drawSystem = drawSystem;
-    }
-
+    private float halfOfX, halfOfY, stepX;
+    private boolean drawGrid, drawCoords;
     private boolean drawSteps;
     private boolean drawSystem;
 
@@ -58,7 +29,7 @@ public class PaintGraph extends JPanel {
         center = (int) (lengthX * halfOfX + paddingX);
         biasForSecondSystem = 600;
         polygonPoints = new ArrayList<>();
-        red = green = blue = 1;
+        drawCoords = true;
     }
 
     public void paint(Graphics g2) {
@@ -79,10 +50,22 @@ public class PaintGraph extends JPanel {
             drawGrid(g, biasForSecondSystem);
 //            drawRoundGrid(g);
         }
+        if (drawCoords) {
+            drawCoords(g, 0);
+            drawCoords(g, biasForSecondSystem);
+        }
         drawPolygon(g);
 //        funcCar(g);
     }
 
+    private void drawCoords(Graphics2D g, int biasForSecondSystem) {
+        for (Point p : polygonPoints) {
+            Font currentFont = g.getFont();
+            g.setFont(new Font("Calibri", 1, 15));
+            g.drawString(p.x + " " + p.y, p.x + biasForSecondSystem, p.y + biasForSecondSystem);
+            g.setFont(currentFont);
+        }
+    }
 
     void drawPolygon(Graphics2D g) {
         int[] xPoints = new int[polygonPoints.size()];
@@ -94,11 +77,12 @@ public class PaintGraph extends JPanel {
             i++;
         }
         Polygon polygon = new Polygon(xPoints, yPoints, polygonPoints.size());
+        Stroke currentStroke = g.getStroke();
+        g.setStroke(new BasicStroke(2));
         g.drawPolygon(polygon);
+        g.setStroke(currentStroke);
         if (spin) {
-            g.setColor(new Color(red, green, blue));
             g.fillPolygon(polygon);
-            g.setColor(Color.black);
         }
     }
 
@@ -338,5 +322,39 @@ public class PaintGraph extends JPanel {
 
     public void setDrawGrid(boolean drawGrid) {
         this.drawGrid = drawGrid;
+    }
+
+    public boolean isSpin() {
+        return spin;
+    }
+
+    public void setSpin(boolean spin) {
+        this.spin = spin;
+    }
+
+    private boolean spin;
+
+    public boolean isDrawSteps() {
+        return drawSteps;
+    }
+
+    public void setDrawSteps(boolean drawSteps) {
+        this.drawSteps = drawSteps;
+    }
+
+    public boolean isDrawSystem() {
+        return drawSystem;
+    }
+
+    public void setDrawSystem(boolean drawSystem) {
+        this.drawSystem = drawSystem;
+    }
+
+    public boolean isDrawCoords() {
+        return drawCoords;
+    }
+
+    public void setDrawCoords(boolean drawCoords) {
+        this.drawCoords = drawCoords;
     }
 }

@@ -10,7 +10,7 @@ import java.util.TimerTask;
 public class ButPan extends JPanel implements ActionListener, MouseListener {
 
     private JButton jbt1, jbt2, jbt7, jbt8, clearPolygonButton;
-    private JCheckBox gridBox, stepsBox, coordinateSystemBox, spin;
+    private JCheckBox gridBox, stepsBox, coordinateSystemBox, spin, showCoords;
     PaintGraph pg;
     boolean spiner;
     java.util.Timer timer;
@@ -55,6 +55,10 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         }
         if (e.getSource().equals(gridBox)) {
             pg.setDrawGrid(!pg.isDrawGrid());
+            pg.repaint();
+        }
+        if (e.getSource().equals(showCoords)) {
+            pg.setDrawCoords(!pg.isDrawCoords());
             pg.repaint();
         }
         if (e.getSource().equals(stepsBox)) {
@@ -104,6 +108,8 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         stepsBox = new JCheckBox("Единичный отрезок");
         stepsBox.doClick();
         coordinateSystemBox = new JCheckBox("Система координат");
+        showCoords = new JCheckBox("Показывать координаты");
+        showCoords.doClick();
         clearPolygonButton = new JButton("Очистить полигон");
         coordinateSystemBox.doClick();
         spin = new JCheckBox("ВРАЩАТЬ!");
@@ -117,15 +123,18 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         clearPolygonButton.addActionListener(this);
         pg.addMouseListener(this);
         spin.addActionListener(this);
+        showCoords.addActionListener(this);
         add(jbt1);
         add(jbt2);
         add(jbt7);
         add(jbt8);
         add(gridBox);
+        add(showCoords);
         add(stepsBox);
         add(coordinateSystemBox);
         add(clearPolygonButton);
         add(spin);
+
         timer = new java.util.Timer();
 
 
