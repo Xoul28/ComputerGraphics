@@ -84,35 +84,31 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
                     }
                 };
                 timer.schedule(task, 1, 1);
-            }
-            else
+            } else
                 task.cancel();
         }
 
     }
 
     public ButPan(PaintGraph p) {
-//        setBorder(new BasicBorders.FieldBorder(Color.black, Color.BLACK, Color.BLUE, Color.lightGray));
-//        setSize(200,200);
-//        setMaximumSize(new Dimension(200,200));
-        setLayout(new FlowLayout(FlowLayout.LEFT));
-        setLocation(10, 200);
         pg = p;
         jbt1 = new JButton("Scale +");
-
         jbt2 = new JButton("Scale -");
         jbt7 = new JButton("hx+");
         jbt8 = new JButton("hx-");
+        clearPolygonButton = new JButton("Очистить полигон");
+
         gridBox = new JCheckBox("Координатная сетка");
         gridBox.doClick();
         stepsBox = new JCheckBox("Единичный отрезок");
         stepsBox.doClick();
         coordinateSystemBox = new JCheckBox("Система координат");
+        coordinateSystemBox.doClick();
         showCoords = new JCheckBox("Показывать координаты");
         showCoords.doClick();
-        clearPolygonButton = new JButton("Очистить полигон");
-        coordinateSystemBox.doClick();
         spin = new JCheckBox("ВРАЩАТЬ!");
+
+
         jbt1.addActionListener(this);
         jbt2.addActionListener(this);
         jbt7.addActionListener(this);
@@ -124,6 +120,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         pg.addMouseListener(this);
         spin.addActionListener(this);
         showCoords.addActionListener(this);
+
         add(jbt1);
         add(jbt2);
         add(jbt7);

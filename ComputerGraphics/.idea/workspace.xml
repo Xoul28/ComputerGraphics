@@ -22,11 +22,9 @@
       <file leaf-file-name="PaintGraph.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/PaintGraph.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="84" column="25" lean-forward="false" selection-start-line="84" selection-start-column="25" selection-end-line="84" selection-end-column="25" />
+            <state relative-caret-position="390">
+              <caret line="30" column="27" lean-forward="false" selection-start-line="30" selection-start-column="27" selection-end-line="30" selection-end-column="27" />
               <folding>
-                <element signature="method#PaintGraph#0;class#PaintGraph#0" expanded="false" />
-                <element signature="method#paint#0;class#PaintGraph#0" expanded="false" />
                 <element signature="method#funcCar#0;class#PaintGraph#0" expanded="false" />
                 <element signature="method#drawSteps#0;class#PaintGraph#0" expanded="false" />
                 <element signature="method#drawGrid#0;class#PaintGraph#0" expanded="false" />
@@ -43,8 +41,8 @@
       <file leaf-file-name="DirPan.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/DirPan.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="18" column="17" lean-forward="true" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
+            <state relative-caret-position="45">
+              <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -53,8 +51,8 @@
       <file leaf-file-name="ButPan.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ButPan.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="291">
-              <caret line="60" column="47" lean-forward="false" selection-start-line="60" selection-start-column="47" selection-end-line="60" selection-end-column="47" />
+            <state relative-caret-position="-241">
+              <caret line="92" column="33" lean-forward="false" selection-start-line="92" selection-start-column="33" selection-end-line="92" selection-end-column="33" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2468#2683#0" expanded="true" />
@@ -93,10 +91,10 @@
         <option value="$PROJECT_DIR$/src/main.java" />
         <option value="$PROJECT_DIR$/src/RadPan.java" />
         <option value="$PROJECT_DIR$/src/Main.java" />
-        <option value="$PROJECT_DIR$/src/DirPan.java" />
         <option value="$PROJECT_DIR$/src/Point.java" />
-        <option value="$PROJECT_DIR$/src/ButPan.java" />
         <option value="$PROJECT_DIR$/src/PaintGraph.java" />
+        <option value="$PROJECT_DIR$/src/ButPan.java" />
+        <option value="$PROJECT_DIR$/src/DirPan.java" />
       </list>
     </option>
   </component>
@@ -130,6 +128,16 @@
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lab1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+          </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="lab1" />
@@ -620,12 +628,12 @@
       <updated>1486103179655</updated>
       <workItem from="1490335665649" duration="8801000" />
       <workItem from="1490459458345" duration="201000" />
-      <workItem from="1490901408410" duration="1832000" />
+      <workItem from="1490901408410" duration="5858000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="10834000" />
+    <option name="totallyTimeSpent" value="14860000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -671,7 +679,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="23" />
+      <option name="time" value="24" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -685,8 +693,6 @@
         <state relative-caret-position="1440">
           <caret line="96" column="31" lean-forward="false" selection-start-line="96" selection-start-column="31" selection-end-line="97" selection-end-column="19" />
           <folding>
-            <element signature="method#PaintGraph#0;class#PaintGraph#0" expanded="false" />
-            <element signature="method#paint#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#funcCar#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawSteps#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawGrid#0;class#PaintGraph#0" expanded="false" />
@@ -732,8 +738,6 @@
         <state relative-caret-position="1440">
           <caret line="96" column="31" lean-forward="true" selection-start-line="96" selection-start-column="31" selection-end-line="97" selection-end-column="19" />
           <folding>
-            <element signature="method#PaintGraph#0;class#PaintGraph#0" expanded="false" />
-            <element signature="method#paint#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#funcCar#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawSteps#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawGrid#0;class#PaintGraph#0" expanded="false" />
@@ -779,8 +783,6 @@
         <state relative-caret-position="945">
           <caret line="63" column="20" lean-forward="false" selection-start-line="63" selection-start-column="6" selection-end-line="63" selection-end-column="20" />
           <folding>
-            <element signature="method#PaintGraph#0;class#PaintGraph#0" expanded="false" />
-            <element signature="method#paint#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#funcCar#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawSteps#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawGrid#0;class#PaintGraph#0" expanded="false" />
@@ -818,8 +820,6 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#PaintGraph#0;class#PaintGraph#0" expanded="false" />
-            <element signature="method#paint#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#funcCar#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawSteps#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawGrid#0;class#PaintGraph#0" expanded="false" />
@@ -857,8 +857,6 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#PaintGraph#0;class#PaintGraph#0" expanded="false" />
-            <element signature="method#paint#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#funcCar#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawSteps#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawGrid#0;class#PaintGraph#0" expanded="false" />
@@ -896,8 +894,6 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="method#PaintGraph#0;class#PaintGraph#0" expanded="false" />
-            <element signature="method#paint#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#funcCar#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawSteps#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawGrid#0;class#PaintGraph#0" expanded="false" />
@@ -935,8 +931,6 @@
         <state relative-caret-position="765">
           <caret line="60" column="28" lean-forward="true" selection-start-line="60" selection-start-column="28" selection-end-line="60" selection-end-column="28" />
           <folding>
-            <element signature="method#PaintGraph#0;class#PaintGraph#0" expanded="false" />
-            <element signature="method#paint#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#funcCar#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawSteps#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawGrid#0;class#PaintGraph#0" expanded="false" />
@@ -974,8 +968,6 @@
         <state relative-caret-position="2600">
           <caret line="159" column="18" lean-forward="false" selection-start-line="159" selection-start-column="18" selection-end-line="159" selection-end-column="18" />
           <folding>
-            <element signature="method#PaintGraph#0;class#PaintGraph#0" expanded="false" />
-            <element signature="method#paint#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#funcCar#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawSteps#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawGrid#0;class#PaintGraph#0" expanded="false" />
@@ -1031,8 +1023,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ButPan.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="60" column="47" lean-forward="false" selection-start-line="60" selection-start-column="47" selection-end-line="60" selection-end-column="47" />
+        <state relative-caret-position="-241">
+          <caret line="92" column="33" lean-forward="false" selection-start-line="92" selection-start-column="33" selection-end-line="92" selection-end-column="33" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2468#2683#0" expanded="true" />
@@ -1043,19 +1035,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/DirPan.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="18" column="17" lean-forward="true" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
+        <state relative-caret-position="45">
+          <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PaintGraph.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="84" column="25" lean-forward="false" selection-start-line="84" selection-start-column="25" selection-end-line="84" selection-end-column="25" />
+        <state relative-caret-position="390">
+          <caret line="30" column="27" lean-forward="false" selection-start-line="30" selection-start-column="27" selection-end-line="30" selection-end-column="27" />
           <folding>
-            <element signature="method#PaintGraph#0;class#PaintGraph#0" expanded="false" />
-            <element signature="method#paint#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#funcCar#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawSteps#0;class#PaintGraph#0" expanded="false" />
             <element signature="method#drawGrid#0;class#PaintGraph#0" expanded="false" />
