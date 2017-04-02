@@ -2,16 +2,14 @@ import org.w3c.dom.css.RGBColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 
 public class PaintGraph extends JPanel {
 
     private int scale, nx, paddingY, paddingX, lengthY, lengthX, center, biasForSecondSystem;
-    private ArrayList<Point> polygonPoints;
+    private ArrayList<Point> polygonPoints, transferedPoints;
     private float halfOfX, halfOfY, stepX;
-    private boolean drawGrid, drawCoords;
-    private boolean drawSteps;
-    private boolean drawSystem;
+    private boolean drawGrid, drawCoords, drawSystem, drawSteps, doTransfer;
 
     public PaintGraph() {
         scale = 20;// цена деления  по шкалам
@@ -29,7 +27,9 @@ public class PaintGraph extends JPanel {
         center = (int) (lengthX * halfOfX + paddingX);
         biasForSecondSystem = 600;
         polygonPoints = new ArrayList<>();
+        transferedPoints = new ArrayList<>();
         drawCoords = true;
+        doTransfer = false;
     }
 
     public void paint(Graphics g2) {
@@ -52,9 +52,11 @@ public class PaintGraph extends JPanel {
         }
         if (drawCoords) {
             drawCoords(g, 0);
-            drawCoords(g, biasForSecondSystem);
         }
-        drawPolygon(g);
+        drawPolygon(g, 0, polygonPoints);
+        if (doTransfer) {
+            drawPolygon(g, biasForSecondSystem, transferedPoints);
+        }
 //        funcCar(g);
     }
 
@@ -62,18 +64,18 @@ public class PaintGraph extends JPanel {
         for (Point p : polygonPoints) {
             Font currentFont = g.getFont();
             g.setFont(new Font("Calibri", 1, 15));
-            g.drawString(p.x + " " + p.y, p.x + biasForSecondSystem, p.y + biasForSecondSystem);
+            g.drawString(p.x + " " + p.y, p.x + biasForSecondSystem, p.y);
             g.setFont(currentFont);
         }
     }
 
-    void drawPolygon(Graphics2D g) {
+    void drawPolygon(Graphics2D g, int biasForSecondSystem, ArrayList<Point> polygonPoints) {
         int[] xPoints = new int[polygonPoints.size()];
         int[] yPoints = new int[polygonPoints.size()];
         int i = 0;
         for (Point p : polygonPoints) {
-            xPoints[i] = p.x;
-            yPoints[i] = p.y;
+            xPoints[i] = (int) (p.x + biasForSecondSystem);
+            yPoints[i] = (int) p.y;
             i++;
         }
         Polygon polygon = new Polygon(xPoints, yPoints, polygonPoints.size());
@@ -83,6 +85,41 @@ public class PaintGraph extends JPanel {
         g.setStroke(currentStroke);
         if (spin) {
             g.fillPolygon(polygon);
+        }
+    }
+
+    public void tryToTransfer(Point point) {
+        if (isPartOfPolygon(point)) {
+            doTransfer = true;
+        }
+    }
+
+    private boolean isPartOfPolygon(Point point) {
+        Point previousPoint, currentPoint;
+        for (int i = 0; i < polygonPoints.size(); i++) {
+            if (i == 0) {
+                previousPoint = polygonPoints.get(polygonPoints.size() - 1);
+                currentPoint = polygonPoints.get(i);
+            } else {
+                previousPoint = polygonPoints.get(i - 1);
+                currentPoint = polygonPoints.get(i);
+            }
+            int counts = (point.x - previousPoint.x) * (currentPoint.y - previousPoint.y) -
+                    (currentPoint.x - previousPoint.x) * (point.y - previousPoint.y);
+            boolean sideContainsPoint = Math.abs(counts) < 600;
+            System.out.println(sideContainsPoint);
+            if (sideContainsPoint) {
+                transfer(new Point(currentPoint.x - previousPoint.x, currentPoint.y - previousPoint.y));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void transfer(Point point) {
+        transferedPoints.clear();
+        for (Point p : polygonPoints) {
+            transferedPoints.add(new Point(p.x + point.x, p.y + point.y));
         }
     }
 
@@ -244,13 +281,6 @@ public class PaintGraph extends JPanel {
 
 
     // группа getXXX(), setXXX() - методов
-    public int getNx() {
-        return nx;
-    }
-
-    public void setNx(int nx) {
-        this.nx = nx;
-    }
 
     public int getScale() {
         return scale;
@@ -260,60 +290,12 @@ public class PaintGraph extends JPanel {
         this.scale = scale;
     }
 
-    public float getHalfOfY() {
-        return halfOfY;
-    }
-
-    public void setHalfOfY(float halfOfY) {
-        this.halfOfY = halfOfY;
-    }
-
-    public float getHalfOfX() {
-        return halfOfX;
-    }
-
-    public void setHalfOfX(float halfOfX) {
-        this.halfOfX = halfOfX;
-    }
-
     public float getStepX() {
         return stepX;
     }
 
     public void setStepX(float stepX) {
         this.stepX = stepX;
-    }
-
-    public int getLengthX() {
-        return lengthX;
-    }
-
-    public void setLengthX(int lengthX) {
-        this.lengthX = lengthX;
-    }
-
-    public int getLengthY() {
-        return lengthY;
-    }
-
-    public void setLengthY(int lengthY) {
-        this.lengthY = lengthY;
-    }
-
-    public int getPaddingY() {
-        return paddingY;
-    }
-
-    public void setPaddingY(int paddingY) {
-        this.paddingY = paddingY;
-    }
-
-    public int getPaddingX() {
-        return paddingX;
-    }
-
-    public void setPaddingX(int paddingX) {
-        this.paddingX = paddingX;
     }
 
     public boolean isDrawGrid() {
@@ -356,5 +338,13 @@ public class PaintGraph extends JPanel {
 
     public void setDrawCoords(boolean drawCoords) {
         this.drawCoords = drawCoords;
+    }
+
+    public boolean isDoTransfer() {
+        return doTransfer;
+    }
+
+    public void setDoTransfer(boolean doTransfer) {
+        this.doTransfer = doTransfer;
     }
 }

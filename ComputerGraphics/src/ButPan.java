@@ -10,7 +10,7 @@ import java.util.TimerTask;
 public class ButPan extends JPanel implements ActionListener, MouseListener {
 
     private JButton jbt1, jbt2, jbt7, jbt8, clearPolygonButton;
-    private JCheckBox gridBox, stepsBox, coordinateSystemBox, spin, showCoords;
+    private JCheckBox gridBox, stepsBox, coordinateSystemBox, spin, showCoords, transfer;
     PaintGraph pg;
     boolean spiner;
     java.util.Timer timer;
@@ -107,6 +107,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         showCoords = new JCheckBox("Показывать координаты");
         showCoords.doClick();
         spin = new JCheckBox("ВРАЩАТЬ!");
+        transfer = new JCheckBox("Переносить");
 
 
         jbt1.addActionListener(this);
@@ -120,6 +121,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         pg.addMouseListener(this);
         spin.addActionListener(this);
         showCoords.addActionListener(this);
+        transfer.addActionListener(this);
 
         add(jbt1);
         add(jbt2);
@@ -131,6 +133,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         add(coordinateSystemBox);
         add(clearPolygonButton);
         add(spin);
+        add(transfer);
 
         timer = new java.util.Timer();
 
@@ -141,8 +144,13 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
     public void mouseClicked(MouseEvent e) {
         System.out.println("Произошёл клик по координатам мыши " + e.getXOnScreen() + "  " + e.getYOnScreen());
         Point point = new Point(e.getX(), e.getY());
-        pg.addPointToList(point);
-        pg.repaint();
+        if (!transfer.isSelected()) {
+            pg.addPointToList(point);
+            pg.repaint();
+        } else {
+            pg.tryToTransfer(point);
+            pg.repaint();
+        }
     }
 
     @Override
