@@ -9,12 +9,20 @@ import java.util.TimerTask;
 
 public class ButPan extends JPanel implements ActionListener, MouseListener {
 
-    private JButton jbt1, jbt2, jbt7, jbt8, clearPolygonButton;
+    private JButton jbt1, jbt2, jbt7, jbt8, clearPolygonButton, spinButton;
+    private JButton speedUp, speedDown;
     private JCheckBox gridBox, stepsBox, coordinateSystemBox, spin, showCoords, transfer;
+    private JTextField angle;
+    private JLabel speedLabel;
     PaintGraph pg;
-    boolean spiner;
+    boolean spiner, areWeGoingToSpin;
     java.util.Timer timer;
     TimerTask task;
+
+    private Point lastPoint;
+    private int lastAngle, speed = 5;
+
+
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(jbt1)) {
@@ -74,18 +82,22 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
             pg.repaint();
         }
         if (e.getSource().equals(spin)) {
-
             if (spin.isSelected()) {
                 task = new TimerTask() {
                     @Override
                     public void run() {
                         pg.setSpin(!pg.isSpin());
+                        lastAngle += Integer.parseInt(angle.getText());
+                        pg.spin(lastPoint, lastAngle);
                         pg.repaint();
                     }
                 };
-                timer.schedule(task, 1, 1);
+                timer.schedule(task, 1, speed);
             } else
                 task.cancel();
+        }
+        if (e.getSource().equals(spinButton)) {
+            areWeGoingToSpin = true;
         }
 
     }
@@ -97,6 +109,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         jbt7 = new JButton("hx+");
         jbt8 = new JButton("hx-");
         clearPolygonButton = new JButton("Очистить полигон");
+        spinButton = new JButton("Вращать");
 
         gridBox = new JCheckBox("Координатная сетка");
         gridBox.doClick();
@@ -108,6 +121,11 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         showCoords.doClick();
         spin = new JCheckBox("ВРАЩАТЬ!");
         transfer = new JCheckBox("Переносить");
+        angle = new JTextField("");
+        angle.setColumns(3);
+
+        speedLabel = new JLabel();
+        speedLabel.setText(speed + "");
 
 
         jbt1.addActionListener(this);
@@ -122,6 +140,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         spin.addActionListener(this);
         showCoords.addActionListener(this);
         transfer.addActionListener(this);
+        spinButton.addActionListener(this);
 
         add(jbt1);
         add(jbt2);
@@ -134,6 +153,9 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         add(clearPolygonButton);
         add(spin);
         add(transfer);
+        add(spinButton);
+        add(angle);
+
 
         timer = new java.util.Timer();
 
@@ -144,11 +166,16 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
     public void mouseClicked(MouseEvent e) {
         System.out.println("Произошёл клик по координатам мыши " + e.getXOnScreen() + "  " + e.getYOnScreen());
         Point point = new Point(e.getX(), e.getY());
-        if (!transfer.isSelected()) {
-            pg.addPointToList(point);
+        if (transfer.isSelected()) {
+            pg.tryToTransfer(point);
+            pg.repaint();
+        } else if (areWeGoingToSpin) {
+            pg.spin(new Point(e.getX(), e.getY()), Integer.parseInt(angle.getText()));
+            lastPoint = new Point(e.getX(), e.getY());
+            areWeGoingToSpin = false;
             pg.repaint();
         } else {
-            pg.tryToTransfer(point);
+            pg.addPointToList(point);
             pg.repaint();
         }
     }

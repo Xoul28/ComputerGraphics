@@ -7,9 +7,9 @@ import java.util.*;
 public class PaintGraph extends JPanel {
 
     private int scale, nx, paddingY, paddingX, lengthY, lengthX, center, biasForSecondSystem;
-    private ArrayList<Point> polygonPoints, transferedPoints;
+    private ArrayList<Point> polygonPoints, transferedPoints, spinPoints;
     private float halfOfX, halfOfY, stepX;
-    private boolean drawGrid, drawCoords, drawSystem, drawSteps, doTransfer;
+    private boolean drawGrid, drawCoords, drawSystem, drawSteps, doTransfer, spining;
 
     public PaintGraph() {
         scale = 20;// цена деления  по шкалам
@@ -28,8 +28,10 @@ public class PaintGraph extends JPanel {
         biasForSecondSystem = 600;
         polygonPoints = new ArrayList<>();
         transferedPoints = new ArrayList<>();
+        spinPoints = new ArrayList<>();
         drawCoords = true;
         doTransfer = false;
+        spining = false;
     }
 
     public void paint(Graphics g2) {
@@ -57,6 +59,10 @@ public class PaintGraph extends JPanel {
         if (doTransfer) {
             drawPolygon(g, biasForSecondSystem, transferedPoints);
         }
+        if (spining) {
+            drawPolygon(g, biasForSecondSystem, spinPoints);
+            spining = false;
+        }
 //        funcCar(g);
     }
 
@@ -64,7 +70,9 @@ public class PaintGraph extends JPanel {
         for (Point p : polygonPoints) {
             Font currentFont = g.getFont();
             g.setFont(new Font("Calibri", 1, 15));
-            g.drawString(p.x + " " + p.y, p.x + biasForSecondSystem, p.y);
+            int x = (int) (p.x - lengthX * halfOfX - paddingX);
+            int y = -(int) (p.y - lengthY * halfOfY - paddingY);
+            g.drawString(x + " : " + y, p.x + biasForSecondSystem, p.y);
             g.setFont(currentFont);
         }
     }
@@ -346,5 +354,36 @@ public class PaintGraph extends JPanel {
 
     public void setDoTransfer(boolean doTransfer) {
         this.doTransfer = doTransfer;
+    }
+
+    public void spin(Point point, int angle) {
+        spinPoints.clear();
+        for (Point p : polygonPoints) {
+            double cos = Math.cos(Math.toRadians(angle));
+            double sin = Math.sin(Math.toRadians(angle));
+
+            int vectorToMoveX = (int) (point.x - lengthX * halfOfX - paddingX);
+            int vectorToMoveY = (int) (point.y - lengthY * halfOfY - paddingY);
+
+            int pointToRollX = (int) (p.x - lengthX * halfOfX - paddingX);
+            int pointToRollY = (int) (p.y - lengthY * halfOfY - paddingY);
+            int length = (int) (lengthX * halfOfX);
+            //x * cos(0)
+            int x1 = (int) ((pointToRollX - vectorToMoveX) * cos);
+            //y * sin(0)
+            int y1 = (int) ((pointToRollY - vectorToMoveY) * sin);
+
+            //x * cos(0)
+            int x2 = (int) ((pointToRollX - vectorToMoveX) * sin);
+            //y * sin(0)
+            int y2 = (int) ((pointToRollY - vectorToMoveY) * cos);
+
+            int newX2 =vectorToMoveX + x1 - y1;
+            int newY2 =vectorToMoveY + y2 + x2;
+
+            spinPoints.add(new Point((int) (newX2 + lengthX * halfOfX + paddingX), (int) (newY2 + lengthY * halfOfY + paddingY)));
+            spining = true;
+        }
+
     }
 }
