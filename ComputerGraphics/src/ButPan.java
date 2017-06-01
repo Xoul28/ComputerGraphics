@@ -24,7 +24,6 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
     private int lastAngle, speed = 5;
     private double lastScale = 1;
 
-
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(jbt1)) {
             jbt2.setEnabled(true);
@@ -106,8 +105,9 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
                     }
                 };
                 timer.schedule(task, 1, speed);
-            } else
+            } else {
                 task.cancel();
+            }
         }
         if (e.getSource().equals(spinButton)) {
             areWeGoingToSpin = true;
@@ -137,8 +137,9 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
                     }
                 };
                 timer.schedule(task, 100, 100);
-            } else
+            } else {
                 task.cancel();
+            }
 //            pg.setScaling(false);
         }
 
@@ -148,19 +149,17 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
                 task = new TimerTask() {
                     @Override
                     public void run() {
-                        pg.setScaling(true);
-                        try {
-                            lastScale = Double.parseDouble(scale.getText());
-                        } catch (Exception e) {
-                            lastScale = 1;
-                        }
-                        pg.scaleTimer(lastScale);
+                        pg.setSpin(true);
+                        pg.reflectSpin(lastPoint);
                         pg.repaint();
+                        pg.setReflecting(true);
                     }
                 };
                 timer.schedule(task, 100, 100);
-            } else
+            } else {
                 task.cancel();
+                pg.setReflecting(false);
+            }
 //            pg.setScaling(false);
         }
 
@@ -246,7 +245,6 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         emptyLabel = new JLabel();
         emptyLabel.setText("    ");
 
-
         jbt1.addActionListener(this);
         jbt2.addActionListener(this);
         jbt7.addActionListener(this);
@@ -287,7 +285,6 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         add(scaleButton);
         add(scale);
 
-
         add(x11);
         add(x12);
         add(x13);
@@ -298,9 +295,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         add(x32);
         add(x33);
 
-
         timer = new java.util.Timer();
-
 
     }
 
@@ -317,6 +312,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
             areWeGoingToSpin = false;
             pg.repaint();
         } else if (areWeGoingToReflect) {
+            lastPoint = new Point(e.getX(), e.getY());
             pg.reflect(new Point(e.getX(), e.getY()));
             areWeGoingToReflect = false;
             pg.repaint();

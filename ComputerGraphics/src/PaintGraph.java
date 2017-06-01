@@ -3,17 +3,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.time.format.TextStyle;
-import java.util.*;
+import java.util.ArrayList;
 
 public class PaintGraph extends JPanel {
 
     private int scale, nx, paddingY, paddingX, lengthY, lengthX, center, biasForSecondSystem;
     private ArrayList<Point> polygonPoints, transferedPoints, spinPoints, scaledPoints, reflectedPoints;
     private float halfOfX, halfOfY, stepX;
-    private boolean drawGrid, drawCoords, drawSystem, drawSteps, doTransfer, spining, scaling;
+    private boolean drawGrid, drawCoords, drawSystem, drawSteps, doTransfer, spining, scaling, reflecting;
 
     Image img;
+
 
     public PaintGraph() {
         scale = 20;// цена деления  по шкалам
@@ -390,6 +390,8 @@ public class PaintGraph extends JPanel {
         doTransfer = spining = scaling = false;
     }
 
+
+
     public void spin(Point point, int angle) {
         spinPolygon(polygonPoints, point, angle);
         spining = true;
@@ -415,8 +417,18 @@ public class PaintGraph extends JPanel {
         double angle = (300 - point.y) / ((double) (point.x) - 300);
         angle = Math.toDegrees(Math.atan(angle));
         Point center = new Point((int) (lengthX * halfOfX + paddingX), (int) (lengthY * halfOfY + paddingY));
-        spinPolygon(polygonPoints, center, (int) -angle);
         ArrayList<Point> reflectedPoints = new ArrayList<>();
+        if(reflecting) {
+            for (int i = 0; i < spinPoints.size(); i++) {
+                int y = 300 - spinPoints.get(i).y;
+                y += 300;
+                reflectedPoints.add(new Point(spinPoints.get(i).x , y));
+            }
+            spinPolygon(reflectedPoints, center, (int) -angle);
+        }else {
+            spinPolygon(polygonPoints, center, (int) -angle);
+        }
+        reflectedPoints.clear();
         for (int i = 0; i < spinPoints.size(); i++) {
             int y = 300 - spinPoints.get(i).y;
             y += 300;
@@ -462,7 +474,6 @@ public class PaintGraph extends JPanel {
 
             int pointToRollX = (int) (p.x - lengthX * halfOfX - paddingX);
             int pointToRollY = (int) (p.y - lengthY * halfOfY - paddingY);
-            int length = (int) (lengthX * halfOfX);
             //x * cos(0)
             int x1 = (int) ((pointToRollX - vectorToMoveX) * cos);
             //y * sin(0)
@@ -479,4 +490,13 @@ public class PaintGraph extends JPanel {
             spinPoints.add(new Point((int) (newX2 + lengthX * halfOfX + paddingX), (int) (newY2 + lengthY * halfOfY + paddingY)));
         }
     }
+
+    public boolean isReflecting() {
+        return reflecting;
+    }
+
+    public void setReflecting(boolean reflecting) {
+        this.reflecting = reflecting;
+    }
 }
+
