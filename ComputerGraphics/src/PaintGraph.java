@@ -1,15 +1,19 @@
-import org.w3c.dom.css.RGBColor;
-
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.time.format.TextStyle;
 import java.util.*;
 
 public class PaintGraph extends JPanel {
 
     private int scale, nx, paddingY, paddingX, lengthY, lengthX, center, biasForSecondSystem;
-    private ArrayList<Point> polygonPoints, transferedPoints, spinPoints;
+    private ArrayList<Point> polygonPoints, transferedPoints, spinPoints, scaledPoints, reflectedPoints;
     private float halfOfX, halfOfY, stepX;
-    private boolean drawGrid, drawCoords, drawSystem, drawSteps, doTransfer, spining;
+    private boolean drawGrid, drawCoords, drawSystem, drawSteps, doTransfer, spining, scaling;
+
+    Image img;
 
     public PaintGraph() {
         scale = 20;// цена деления  по шкалам
@@ -29,14 +33,23 @@ public class PaintGraph extends JPanel {
         polygonPoints = new ArrayList<>();
         transferedPoints = new ArrayList<>();
         spinPoints = new ArrayList<>();
+        scaledPoints = new ArrayList<>();
+        reflectedPoints = new ArrayList<>();
         drawCoords = true;
         doTransfer = false;
         spining = false;
+
+        try {
+            img = ImageIO.read(new File("kabam.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void paint(Graphics g2) {
         Graphics2D g = (Graphics2D) g2;
         super.paint(g);
+//        g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
         g.setFont(new Font("TimesRoman", Font.PLAIN, 10));
         if (drawSystem) {
             drawSystem(g, 0);
@@ -52,32 +65,37 @@ public class PaintGraph extends JPanel {
             drawGrid(g, biasForSecondSystem);
 //            drawRoundGrid(g);
         }
-        if (drawCoords) {
-            drawCoords(g, 0);
-        }
         drawPolygon(g, 0, polygonPoints);
         if (doTransfer) {
             drawPolygon(g, biasForSecondSystem, transferedPoints);
         }
         if (spining) {
             drawPolygon(g, biasForSecondSystem, spinPoints);
-            spining = false;
         }
+        if (scaling) {
+            drawPolygon(g, biasForSecondSystem, scaledPoints);
+        }
+        clearBools();
 //        funcCar(g);
     }
 
-    private void drawCoords(Graphics2D g, int biasForSecondSystem) {
+    private void drawCoords(Graphics2D g, int biasForSecondSystem, ArrayList<Point> polygonPoints) {
         for (Point p : polygonPoints) {
             Font currentFont = g.getFont();
-            g.setFont(new Font("Calibri", 1, 15));
-            int x = (int) (p.x - lengthX * halfOfX - paddingX);
-            int y = -(int) (p.y - lengthY * halfOfY - paddingY);
-            g.drawString(x + " : " + y, p.x + biasForSecondSystem, p.y);
+            g.setFont(new Font("Calibri", 0, 17));
+            double x = (p.x - lengthX * halfOfX - paddingX) / scale;
+            double y = -(p.y - lengthY * halfOfY - paddingY) / scale;
+            String formatX = String.format( "% .2f", x);
+            String formatY = String.format( "% .2f", y);
+            g.drawString(formatX + " : " + formatY, p.x + biasForSecondSystem, p.y);
             g.setFont(currentFont);
         }
     }
 
     void drawPolygon(Graphics2D g, int biasForSecondSystem, ArrayList<Point> polygonPoints) {
+        if (drawCoords) {
+            drawCoords(g, biasForSecondSystem, polygonPoints);
+        }
         int[] xPoints = new int[polygonPoints.size()];
         int[] yPoints = new int[polygonPoints.size()];
         int i = 0;
@@ -88,11 +106,13 @@ public class PaintGraph extends JPanel {
         }
         Polygon polygon = new Polygon(xPoints, yPoints, polygonPoints.size());
         Stroke currentStroke = g.getStroke();
-        g.setStroke(new BasicStroke(2));
+        g.setStroke(new BasicStroke());
         g.drawPolygon(polygon);
         g.setStroke(currentStroke);
         if (spin) {
-            g.fillPolygon(polygon);
+//            g.setColor(Color.red);
+//            g.fillPolygon(polygon);
+//            g.setColor(Color.black);
         }
     }
 
@@ -173,7 +193,7 @@ public class PaintGraph extends JPanel {
                     (int) (paddingX + halfOfX * lengthX + 2) + bias, (int) (lengthY * halfOfY + paddingY - scale * i)
             );
 
-            g.drawString(number + "", (int) (paddingX + halfOfX * lengthX + 4), (int) (lengthY * halfOfY + paddingY - scale * i) + 10);
+            g.drawString(number + "", (int) (paddingX + halfOfX * lengthX + 4) + bias, (int) (lengthY * halfOfY + paddingY - scale * i) + 10);
         }
 
         //x
@@ -285,6 +305,8 @@ public class PaintGraph extends JPanel {
 
     void clear() {
         polygonPoints.clear();
+        transferedPoints.clear();
+        spinPoints.clear();
     }
 
 
@@ -356,8 +378,81 @@ public class PaintGraph extends JPanel {
         this.doTransfer = doTransfer;
     }
 
+    public boolean isScaling() {
+        return scaling;
+    }
+
+    public void setScaling(boolean scaling) {
+        this.scaling = scaling;
+    }
+
+    public void clearBools() {
+        doTransfer = spining = scaling = false;
+    }
+
     public void spin(Point point, int angle) {
+        spinPolygon(polygonPoints, point, angle);
+        spining = true;
+    }
+
+
+    public void reflect(Point point) {
+        double angle = (300 - point.y) / ((double) (point.x) - 300);
+        angle = Math.toDegrees(Math.atan(angle));
+        Point center = new Point((int) (lengthX * halfOfX + paddingX), (int) (lengthY * halfOfY + paddingY));
+        spinPolygon(polygonPoints, center, (int) -angle);
+        ArrayList<Point> reflectedPoints = new ArrayList<>();
+        for (int i = 0; i < spinPoints.size(); i++) {
+            int y = 300 - spinPoints.get(i).y;
+            y += 300;
+            reflectedPoints.add(new Point(spinPoints.get(i).x, y));
+        }
+        spinPolygon(reflectedPoints, center, (int) (angle));
+        spining = true;
+    }
+
+    public void reflectSpin(Point point){
+        double angle = (300 - point.y) / ((double) (point.x) - 300);
+        angle = Math.toDegrees(Math.atan(angle));
+        Point center = new Point((int) (lengthX * halfOfX + paddingX), (int) (lengthY * halfOfY + paddingY));
+        spinPolygon(polygonPoints, center, (int) -angle);
+        ArrayList<Point> reflectedPoints = new ArrayList<>();
+        for (int i = 0; i < spinPoints.size(); i++) {
+            int y = 300 - spinPoints.get(i).y;
+            y += 300;
+            reflectedPoints.add(new Point(spinPoints.get(i).x, y));
+        }
+        spinPolygon(reflectedPoints, center, (int) (angle));
+        spining = true;
+    }
+
+    public void scale(double scale) {
+        scaledPoints.clear();
+        for (Point p : polygonPoints) {
+            int x = p.x;
+            x = (int) ((x - 300) * scale + 300);
+            Point newP = new Point(x, p.y);
+            scaledPoints.add(newP);
+        }
+    }
+
+    public void scaleTimer(double scale){
+        if (scaledPoints.isEmpty()) {
+            for (Point p : polygonPoints) {
+                Point newP = new Point(p.x, p.y);
+                scaledPoints.add(newP);
+            }
+        }
+        for (Point p : scaledPoints) {
+            int x = p.x;
+            x = (int)Math.round(((x - 300) * scale + 300));
+            p.x = x;
+        }
+    }
+
+    void spinPolygon(ArrayList<Point> polygonPoints, Point point, int angle) {
         spinPoints.clear();
+        angle = -angle;
         for (Point p : polygonPoints) {
             double cos = Math.cos(Math.toRadians(angle));
             double sin = Math.sin(Math.toRadians(angle));
@@ -378,12 +473,10 @@ public class PaintGraph extends JPanel {
             //y * sin(0)
             int y2 = (int) ((pointToRollY - vectorToMoveY) * cos);
 
-            int newX2 =vectorToMoveX + x1 - y1;
-            int newY2 =vectorToMoveY + y2 + x2;
+            int newX2 = vectorToMoveX + x1 - y1;
+            int newY2 = vectorToMoveY + y2 + x2;
 
             spinPoints.add(new Point((int) (newX2 + lengthX * halfOfX + paddingX), (int) (newY2 + lengthY * halfOfY + paddingY)));
-            spining = true;
         }
-
     }
 }
