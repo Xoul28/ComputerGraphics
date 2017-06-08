@@ -16,7 +16,7 @@ public class DirPan extends JFrame {
         bp = new ButPan(pg); // инициализация класса кнопок масштаба
 
 //        bp.setLayout(new BorderLayout());
-        bp.setPreferredSize(new Dimension(200, 700));
+        bp.setPreferredSize(new Dimension(150 /*200*/, 700));
         globalContainer.add(bp, BorderLayout.EAST);
         globalContainer.add(pg, BorderLayout.CENTER); // задание размещения
         pg.setBorder(new BasicBorders.FieldBorder(Color.darkGray, Color.DARK_GRAY, Color.LIGHT_GRAY, Color.LIGHT_GRAY));

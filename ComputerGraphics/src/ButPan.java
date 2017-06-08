@@ -1,10 +1,10 @@
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Locale;
 import java.util.TimerTask;
 
 public class ButPan extends JPanel implements ActionListener, MouseListener {
@@ -186,11 +186,8 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         }
 
         if (e.getSource().equals(apply)) {
-
-            matrix = new double[3][3];
             readMatrix();
             pg.multiplyMatrix(matrix);
-            task.cancel();
             pg.repaint();
         }
 
@@ -207,7 +204,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
             matrix[2][0] = Double.parseDouble(x31.getText());
             matrix[2][1] = Double.parseDouble(x32.getText());
             matrix[2][2] = Double.parseDouble(x33.getText());
-        } finally {
+        } catch (Exception e) {
             matrix[0][0] = 1;
             matrix[0][1] = 0;
             matrix[0][2] = 0;
@@ -220,8 +217,21 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         }
     }
 
+    public void setMatrix(double matrix[][]) {
+        x11.setText(String.format(Locale.ROOT, "% .2f", matrix[0][0]));
+        x12.setText(String.format(Locale.ROOT, "% .2f", matrix[0][1]));
+        x13.setText(String.format(Locale.ROOT, "% .2f", matrix[0][2]));
+        x21.setText(String.format(Locale.ROOT, "% .2f", matrix[1][0]));
+        x22.setText(String.format(Locale.ROOT, "% .2f", matrix[1][1]));
+        x23.setText(String.format(Locale.ROOT, "% .2f", matrix[1][2]));
+        x31.setText(String.format(Locale.ROOT, "% .2f", matrix[2][0]));
+        x32.setText(String.format(Locale.ROOT, "% .2f", matrix[2][1]));
+        x33.setText(String.format(Locale.ROOT, "% .2f", matrix[2][2]));
+    }
+
     public ButPan(PaintGraph p) {
         pg = p;
+        pg.setBp(this);
         jbt1 = new JButton("Scale +");
         jbt2 = new JButton("Scale -");
         jbt7 = new JButton("hx+");
@@ -230,8 +240,8 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         spinButton = new JButton("Вращать");
         reflectButton = new JButton("Отражать");
         scaleButton = new JButton("  Scaling  ");
-        scaleButton = new JButton("  apply  ");
-
+        apply = new JButton("  apply  ");
+        matrix = new double[3][3];
         gridBox = new JCheckBox("Координатная сетка");
         gridBox.doClick();
         stepsBox = new JCheckBox("Единичный отрезок");
