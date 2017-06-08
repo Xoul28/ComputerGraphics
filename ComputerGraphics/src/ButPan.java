@@ -9,7 +9,7 @@ import java.util.TimerTask;
 
 public class ButPan extends JPanel implements ActionListener, MouseListener {
 
-    private JButton jbt1, jbt2, jbt7, jbt8, clearPolygonButton, spinButton, reflectButton, scaleButton;
+    private JButton jbt1, jbt2, jbt7, jbt8, clearPolygonButton, spinButton, reflectButton, scaleButton, apply;
     private JButton speedUp, speedDown;
     private JCheckBox gridBox, stepsBox, coordinateSystemBox, spin, showCoords, transfer, scaleCyc, transferCyc, reflectCyc;
     private JTextField angle, scale;
@@ -23,6 +23,8 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
     private Point lastPoint;
     private int lastAngle, speed = 5;
     private double lastScale = 1;
+
+    private double[][] matrix;
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(jbt1)) {
@@ -89,12 +91,28 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
             pg.repaint();
         }
 
+        if (e.getSource().equals(transferCyc)) {
+            if (transferCyc.isSelected()) {
+                task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        pg.tryToTransfer(lastPoint);
+                        pg.repaint();
+                    }
+                };
+                timer.schedule(task, 1, 2000);
+            } else {
+                task.cancel();
+                pg.clearBools();
+            }
+        }
+
         if (e.getSource().equals(spin)) {
             if (spin.isSelected()) {
                 task = new TimerTask() {
                     @Override
                     public void run() {
-                        pg.setSpin(!pg.isSpin());
+//                        pg.setSpin(!pg.isSpin());
                         try {
                             lastAngle += Integer.parseInt(angle.getText());
                         } catch (Exception e) {
@@ -107,6 +125,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
                 timer.schedule(task, 1, speed);
             } else {
                 task.cancel();
+                pg.clearBools();
             }
         }
         if (e.getSource().equals(spinButton)) {
@@ -139,6 +158,8 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
                 timer.schedule(task, 100, 100);
             } else {
                 task.cancel();
+
+                pg.clearBools();
             }
 //            pg.setScaling(false);
         }
@@ -151,18 +172,52 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
                     public void run() {
                         pg.setSpin(true);
                         pg.reflectSpin(lastPoint);
-                        pg.repaint();
                         pg.setReflecting(true);
+                        pg.repaint();
                     }
                 };
-                timer.schedule(task, 100, 100);
+                timer.schedule(task, 100, 1000);
             } else {
                 task.cancel();
                 pg.setReflecting(false);
+                pg.clearBools();
             }
 //            pg.setScaling(false);
         }
 
+        if (e.getSource().equals(apply)) {
+
+            matrix = new double[3][3];
+            readMatrix();
+            pg.multiplyMatrix(matrix);
+            task.cancel();
+            pg.repaint();
+        }
+
+    }
+
+    private void readMatrix() {
+        try {
+            matrix[0][0] = Double.parseDouble(x11.getText());
+            matrix[0][1] = Double.parseDouble(x12.getText());
+            matrix[0][2] = Double.parseDouble(x13.getText());
+            matrix[1][0] = Double.parseDouble(x21.getText());
+            matrix[1][1] = Double.parseDouble(x22.getText());
+            matrix[1][2] = Double.parseDouble(x23.getText());
+            matrix[2][0] = Double.parseDouble(x31.getText());
+            matrix[2][1] = Double.parseDouble(x32.getText());
+            matrix[2][2] = Double.parseDouble(x33.getText());
+        } finally {
+            matrix[0][0] = 1;
+            matrix[0][1] = 0;
+            matrix[0][2] = 0;
+            matrix[1][0] = 0;
+            matrix[1][1] = 1;
+            matrix[1][2] = 0;
+            matrix[2][0] = 0;
+            matrix[2][1] = 0;
+            matrix[2][2] = 1;
+        }
     }
 
     public ButPan(PaintGraph p) {
@@ -175,6 +230,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         spinButton = new JButton("Вращать");
         reflectButton = new JButton("Отражать");
         scaleButton = new JButton("  Scaling  ");
+        scaleButton = new JButton("  apply  ");
 
         gridBox = new JCheckBox("Координатная сетка");
         gridBox.doClick();
@@ -196,47 +252,47 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
 
         x11 = new JTextField("");
         x11.setColumns(3);
-        x11.setBackground(Color.GRAY);
+//        x11.setBackground(Color.GRAY);
         x11.setHorizontalAlignment(JTextField.CENTER);
 
         x12 = new JTextField("");
         x12.setColumns(3);
-        x12.setBackground(Color.GRAY);
+//        x12.setBackground(Color.GRAY);
         x12.setHorizontalAlignment(JTextField.CENTER);
 
         x13 = new JTextField("");
         x13.setColumns(3);
-        x13.setBackground(Color.GRAY);
+//        x13.setBackground(Color.GRAY);
         x13.setHorizontalAlignment(JTextField.CENTER);
 
         x21 = new JTextField("");
         x21.setColumns(3);
-        x21.setBackground(Color.GRAY);
+//        x21.setBackground(Color.GRAY);
         x21.setHorizontalAlignment(JTextField.CENTER);
 
         x22 = new JTextField("");
         x22.setColumns(3);
-        x22.setBackground(Color.GRAY);
+//        x22.setBackground(Color.GRAY);
         x22.setHorizontalAlignment(JTextField.CENTER);
 
         x23 = new JTextField("");
         x23.setColumns(3);
-        x23.setBackground(Color.GRAY);
+//        x23.setBackground(Color.GRAY);
         x23.setHorizontalAlignment(JTextField.CENTER);
 
         x31 = new JTextField("");
         x31.setColumns(3);
-        x31.setBackground(Color.GRAY);
+//        x31.setBackground(Color.GRAY);
         x31.setHorizontalAlignment(JTextField.CENTER);
 
         x32 = new JTextField("");
         x32.setColumns(3);
-        x32.setBackground(Color.GRAY);
+//        x32.setBackground(Color.GRAY);
         x32.setHorizontalAlignment(JTextField.CENTER);
 
         x33 = new JTextField("");
         x33.setColumns(3);
-        x33.setBackground(Color.GRAY);
+//        x33.setBackground(Color.GRAY);
         x33.setHorizontalAlignment(JTextField.CENTER);
 
         speedLabel = new JLabel();
@@ -263,6 +319,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         spinButton.addActionListener(this);
         reflectButton.addActionListener(this);
         scaleButton.addActionListener(this);
+        apply.addActionListener(this);
 
         add(jbt1);
         add(jbt2);
@@ -294,8 +351,11 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         add(x31);
         add(x32);
         add(x33);
+        add(apply);
 
         timer = new java.util.Timer();
+
+        lastPoint = new Point(600, 600);
 
     }
 
@@ -305,6 +365,7 @@ public class ButPan extends JPanel implements ActionListener, MouseListener {
         Point point = new Point(e.getX(), e.getY());
         if (transfer.isSelected()) {
             pg.tryToTransfer(point);
+            lastPoint = point;
             pg.repaint();
         } else if (areWeGoingToSpin) {
             pg.spin(new Point(e.getX(), e.getY()), Integer.parseInt(angle.getText()));

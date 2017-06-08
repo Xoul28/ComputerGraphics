@@ -39,11 +39,6 @@ public class PaintGraph extends JPanel {
         doTransfer = false;
         spining = false;
 
-        try {
-            img = ImageIO.read(new File("kabam.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void paint(Graphics g2) {
@@ -85,8 +80,8 @@ public class PaintGraph extends JPanel {
             g.setFont(new Font("Calibri", 0, 17));
             double x = (p.x - lengthX * halfOfX - paddingX) / scale;
             double y = -(p.y - lengthY * halfOfY - paddingY) / scale;
-            String formatX = String.format( "% .2f", x);
-            String formatY = String.format( "% .2f", y);
+            String formatX = String.format("% .2f", x);
+            String formatY = String.format("% .2f", y);
             g.drawString(formatX + " : " + formatY, p.x + biasForSecondSystem, p.y);
             g.setFont(currentFont);
         }
@@ -122,6 +117,8 @@ public class PaintGraph extends JPanel {
         }
     }
 
+
+
     private boolean isPartOfPolygon(Point point) {
         Point previousPoint, currentPoint;
         for (int i = 0; i < polygonPoints.size(); i++) {
@@ -145,9 +142,14 @@ public class PaintGraph extends JPanel {
     }
 
     private void transfer(Point point) {
-        transferedPoints.clear();
-        for (Point p : polygonPoints) {
-            transferedPoints.add(new Point(p.x + point.x, p.y + point.y));
+        if (transferedPoints.isEmpty())
+            for (Point p : polygonPoints) {
+                transferedPoints.add(new Point(p.x + point.x, p.y + point.y));
+            }
+        else {
+            for (int i =0; i < transferedPoints.size(); i++) {
+                transferedPoints.set(i,new Point(transferedPoints.get(i).x + point.x, transferedPoints.get(i).y + point.y));
+            }
         }
     }
 
@@ -309,6 +311,120 @@ public class PaintGraph extends JPanel {
         spinPoints.clear();
     }
 
+    public void spin(Point point, int angle) {
+        spinPolygon(polygonPoints, point, angle);
+        spining = true;
+    }
+
+
+    public void reflect(Point point) {
+        double angle = (300 - point.y) / ((double) (point.x) - 300);
+        angle = Math.toDegrees(Math.atan(angle));
+        Point center = new Point((int) (lengthX * halfOfX + paddingX), (int) (lengthY * halfOfY + paddingY));
+        spinPolygon(polygonPoints, center, (int) -angle);
+        ArrayList<Point> reflectedPoints = new ArrayList<>();
+        for (int i = 0; i < spinPoints.size(); i++) {
+            int y = 300 - spinPoints.get(i).y;
+            y += 300;
+            reflectedPoints.add(new Point(spinPoints.get(i).x, y));
+        }
+        spinPolygon(reflectedPoints, center, (int) (angle));
+        spining = true;
+    }
+
+    public void reflectSpin(Point point) {
+        double angle = (300 - point.y) / ((double) (point.x) - 300);
+        angle = Math.toDegrees(Math.atan(angle));
+        Point center = new Point((int) (lengthX * halfOfX + paddingX), (int) (lengthY * halfOfY + paddingY));
+        ArrayList<Point> reflectedPoints = new ArrayList<>();
+        if (reflecting) {
+            for (int i = 0; i < spinPoints.size(); i++) {
+                reflectedPoints.add(new Point(spinPoints.get(i).x, spinPoints.get(i).y ));
+            }
+            spinPolygon(reflectedPoints, center, (int) -angle);
+        } else {
+            spinPolygon(polygonPoints, center, (int) -angle);
+        }
+        reflectedPoints.clear();
+        for (int i = 0; i < spinPoints.size(); i++) {
+            int y = 300 - spinPoints.get(i).y;
+            y += 300;
+            reflectedPoints.add(new Point(spinPoints.get(i).x, y));
+        }
+        spinPolygon(reflectedPoints, center, (int) (angle));
+        spining = true;
+    }
+
+    public void scale(double scale) {
+        scaledPoints.clear();
+        for (Point p : polygonPoints) {
+            int x = p.x;
+            x = (int) ((x - 300) * scale + 300);
+            Point newP = new Point(x, p.y);
+            scaledPoints.add(newP);
+        }
+    }
+
+    public void scaleTimer(double scale) {
+        if (scaledPoints.isEmpty()) {
+            for (Point p : polygonPoints) {
+                Point newP = new Point(p.x, p.y);
+                scaledPoints.add(newP);
+            }
+        }
+        for (Point p : scaledPoints) {
+            int x = p.x;
+            x = (int) Math.round(((x - 300) * scale + 300));
+            p.x = x;
+        }
+    }
+
+    void spinPolygon(ArrayList<Point> polygonPoints, Point point, int angle) {
+        spinPoints.clear();
+        angle = -angle;
+        for (Point p : polygonPoints) {
+            double cos = Math.cos(Math.toRadians(angle));
+            double sin = Math.sin(Math.toRadians(angle));
+
+            int vectorToMoveX = (int) (point.x - lengthX * halfOfX - paddingX);
+            int vectorToMoveY = (int) (point.y - lengthY * halfOfY - paddingY);
+
+            int pointToRollX = (int) (p.x - lengthX * halfOfX - paddingX);
+            int pointToRollY = (int) (p.y - lengthY * halfOfY - paddingY);
+            //x * cos(0)
+            int x1 = (int) ((pointToRollX - vectorToMoveX) * cos);
+            //y * sin(0)
+            int y1 = (int) ((pointToRollY - vectorToMoveY) * sin);
+
+            //x * cos(0)
+            int x2 = (int) ((pointToRollX - vectorToMoveX) * sin);
+            //y * sin(0)
+            int y2 = (int) ((pointToRollY - vectorToMoveY) * cos);
+
+            int newX2 = vectorToMoveX + x1 - y1;
+            int newY2 = vectorToMoveY + y2 + x2;
+
+            spinPoints.add(new Point((int) (newX2 + lengthX * halfOfX + paddingX), (int) (newY2 + lengthY * halfOfY + paddingY)));
+        }
+    }
+
+    public void multiplyMatrix(double[][] matrix) {
+        if(!spinPoints.isEmpty())
+        for(int i =0; i < spinPoints.size(); i++){
+            Point p = new Point(spinPoints.get(i).x, spinPoints.get(i).y);
+            p.x = Math.toIntExact(Math.round(p.x * matrix[0][0] + p.y * matrix[0][1]));
+            p.y = Math.toIntExact(Math.round(p.x * matrix[1][0] + p.y * matrix[1][1]));
+            spinPoints.set(i, p);
+            spining = true;
+        }
+    }
+    public boolean isReflecting() {
+        return reflecting;
+    }
+
+    public void setReflecting(boolean reflecting) {
+        this.reflecting = reflecting;
+    }
 
     // группа getXXX(), setXXX() - методов
 
@@ -390,113 +506,10 @@ public class PaintGraph extends JPanel {
         doTransfer = spining = scaling = false;
     }
 
-
-
-    public void spin(Point point, int angle) {
-        spinPolygon(polygonPoints, point, angle);
-        spining = true;
+    public void clearTransfered() {
+        transferedPoints.clear();
     }
 
 
-    public void reflect(Point point) {
-        double angle = (300 - point.y) / ((double) (point.x) - 300);
-        angle = Math.toDegrees(Math.atan(angle));
-        Point center = new Point((int) (lengthX * halfOfX + paddingX), (int) (lengthY * halfOfY + paddingY));
-        spinPolygon(polygonPoints, center, (int) -angle);
-        ArrayList<Point> reflectedPoints = new ArrayList<>();
-        for (int i = 0; i < spinPoints.size(); i++) {
-            int y = 300 - spinPoints.get(i).y;
-            y += 300;
-            reflectedPoints.add(new Point(spinPoints.get(i).x, y));
-        }
-        spinPolygon(reflectedPoints, center, (int) (angle));
-        spining = true;
-    }
-
-    public void reflectSpin(Point point){
-        double angle = (300 - point.y) / ((double) (point.x) - 300);
-        angle = Math.toDegrees(Math.atan(angle));
-        Point center = new Point((int) (lengthX * halfOfX + paddingX), (int) (lengthY * halfOfY + paddingY));
-        ArrayList<Point> reflectedPoints = new ArrayList<>();
-        if(reflecting) {
-            for (int i = 0; i < spinPoints.size(); i++) {
-                int y = 300 - spinPoints.get(i).y;
-                y += 300;
-                reflectedPoints.add(new Point(spinPoints.get(i).x , y));
-            }
-            spinPolygon(reflectedPoints, center, (int) -angle);
-        }else {
-            spinPolygon(polygonPoints, center, (int) -angle);
-        }
-        reflectedPoints.clear();
-        for (int i = 0; i < spinPoints.size(); i++) {
-            int y = 300 - spinPoints.get(i).y;
-            y += 300;
-            reflectedPoints.add(new Point(spinPoints.get(i).x, y));
-        }
-        spinPolygon(reflectedPoints, center, (int) (angle));
-        spining = true;
-    }
-
-    public void scale(double scale) {
-        scaledPoints.clear();
-        for (Point p : polygonPoints) {
-            int x = p.x;
-            x = (int) ((x - 300) * scale + 300);
-            Point newP = new Point(x, p.y);
-            scaledPoints.add(newP);
-        }
-    }
-
-    public void scaleTimer(double scale){
-        if (scaledPoints.isEmpty()) {
-            for (Point p : polygonPoints) {
-                Point newP = new Point(p.x, p.y);
-                scaledPoints.add(newP);
-            }
-        }
-        for (Point p : scaledPoints) {
-            int x = p.x;
-            x = (int)Math.round(((x - 300) * scale + 300));
-            p.x = x;
-        }
-    }
-
-    void spinPolygon(ArrayList<Point> polygonPoints, Point point, int angle) {
-        spinPoints.clear();
-        angle = -angle;
-        for (Point p : polygonPoints) {
-            double cos = Math.cos(Math.toRadians(angle));
-            double sin = Math.sin(Math.toRadians(angle));
-
-            int vectorToMoveX = (int) (point.x - lengthX * halfOfX - paddingX);
-            int vectorToMoveY = (int) (point.y - lengthY * halfOfY - paddingY);
-
-            int pointToRollX = (int) (p.x - lengthX * halfOfX - paddingX);
-            int pointToRollY = (int) (p.y - lengthY * halfOfY - paddingY);
-            //x * cos(0)
-            int x1 = (int) ((pointToRollX - vectorToMoveX) * cos);
-            //y * sin(0)
-            int y1 = (int) ((pointToRollY - vectorToMoveY) * sin);
-
-            //x * cos(0)
-            int x2 = (int) ((pointToRollX - vectorToMoveX) * sin);
-            //y * sin(0)
-            int y2 = (int) ((pointToRollY - vectorToMoveY) * cos);
-
-            int newX2 = vectorToMoveX + x1 - y1;
-            int newY2 = vectorToMoveY + y2 + x2;
-
-            spinPoints.add(new Point((int) (newX2 + lengthX * halfOfX + paddingX), (int) (newY2 + lengthY * halfOfY + paddingY)));
-        }
-    }
-
-    public boolean isReflecting() {
-        return reflecting;
-    }
-
-    public void setReflecting(boolean reflecting) {
-        this.reflecting = reflecting;
-    }
 }
 
